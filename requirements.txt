@@ -1,7 +1,7 @@
 alpha_vantage
 pandas
 numpy
-sklearn
+scikit-learn
 keras
 tensorflow
 matplotlib

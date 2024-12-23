@@ -1,5 +1,6 @@
 creds.json
 .vscode
+llmvenv/
 *.csv
 *.h5
 

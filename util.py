@@ -4,6 +4,15 @@ import numpy as np
 
 history_points = 50
 
+def calc_ema(values, time_period):
+        # https://www.investopedia.com/ask/answers/122314/what-exponential-moving-average-ema-formula-and-how-ema-calculated.asp
+        sma = np.mean(values[:, 3])
+        ema_values = [sma]
+        k = 2 / (1 + time_period)
+        for i in range(len(values) - time_period, len(values)):
+            close = values[i][3]
+            ema_values.append(close * k + ema_values[-1] * (1 - k))
+        return ema_values[-1]
 
 def csv_to_dataset(csv_path):
     data = pd.read_csv(csv_path)
@@ -26,15 +35,6 @@ def csv_to_dataset(csv_path):
     y_normaliser = preprocessing.MinMaxScaler()
     y_normaliser.fit(next_day_open_values)
 
-    def calc_ema(values, time_period):
-        # https://www.investopedia.com/ask/answers/122314/what-exponential-moving-average-ema-formula-and-how-ema-calculated.asp
-        sma = np.mean(values[:, 3])
-        ema_values = [sma]
-        k = 2 / (1 + time_period)
-        for i in range(len(his) - time_period, len(his)):
-            close = his[i][3]
-            ema_values.append(close * k + ema_values[-1] * (1 - k))
-        return ema_values[-1]
 
     technical_indicators = []
     for his in ohlcv_histories_normalised:
@@ -50,7 +50,7 @@ def csv_to_dataset(csv_path):
     technical_indicators_normalised = tech_ind_scaler.fit_transform(technical_indicators)
 
     assert ohlcv_histories_normalised.shape[0] == next_day_open_values_normalised.shape[0] == technical_indicators_normalised.shape[0]
-    return ohlcv_histories_normalised, technical_indicators_normalised, next_day_open_values_normalised, next_day_open_values, y_normaliser
+    return ohlcv_histories_normalised, technical_indicators_normalised, next_day_open_values_normalised, y_normaliser
 
 
 def multiple_csv_to_dataset(test_set_name):
